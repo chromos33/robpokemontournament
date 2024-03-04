@@ -14,7 +14,15 @@ export async function POST(request: Request): Promise<NextResponse> {
       const pokemonname = name;
       const pokemonblob = blob.url;
       try{
-        const result = await sql`INSERT INTO Pokemon (Name, BlobUrl) VALUES (${pokemonname}, ${pokemonblob})`;
+        const {rows,fields} = await sql`SELECT * FROM Pokemon WHERE Name = ${pokemonname};`;
+        if(rows.length > 0)
+        {
+          const result = await sql`UPDATE Pokemon SET BlobUrl = ${pokemonblob};`;
+        }
+        else{
+          const result = await sql`INSERT INTO Pokemon (Name, BlobUrl) VALUES (${pokemonname}, ${pokemonblob});`;
+        }
+        
       }catch(error) {
         return NextResponse.json({ error }, { status: 500 });
       }

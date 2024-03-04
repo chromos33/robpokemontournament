@@ -1,0 +1,29 @@
+.selectbox
+{
+    border:1px solid grey;
+    height:100vh;
+    overflow-y: scroll;
+
+}
+.selectbox_icon
+{
+    padding:5px 10px;
+    border-bottom: 1px solid grey;
+    width: 100%;
+    display:block;
+}
+.selectbox_icon:hover,
+.selectbox_icon.active
+{
+    background-color: lightblue;
+    color: white;
+    cursor:pointer;
+}
+.selectbox_icon:last-child
+{
+    border-bottom: none;
+}
+.new
+{
+    background:#4CAF50 !important;
+}

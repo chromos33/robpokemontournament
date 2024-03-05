@@ -7,20 +7,26 @@ import { useState, useRef, useEffect } from 'react';
 import { revalidatePath } from 'next/cache';
 import SelectBox from "../Components/SelectBox";
 import { MyDropzone } from "../Components/MyDropzone/MyDropzone";
+
+import clsx from "clsx";
+import SuggestDropDown from "../Components/SuggestDropDown/SuggestDropDown";
 export default function Setup() {
+    
     const inputFileRef = useRef<HTMLInputElement>(null);
     const inputNameRef = useRef<HTMLInputElement>(null);
-    const [currentPokemon,setCurrentPokemon] = useState("");
+    const [currentPokemon,setCurrentPokemon] = useState("init");
     const [mode,setMode] = useState("create"); // select or new
 
     const [PokemonData,setPokemonData] = useState<any>([]);
+    const [Participants,setParticipants] = useState<any>([]);
+    const [currentParticipant,setCurrentParticipant] = useState("init");
     useEffect(() => {
-      fetch("/api/getPokemonList").then((res) => res.json()).then((data) => {
+      fetch("/api/getParticipantBaseData").then((res) => res.json()).then((data) => {
         if(data != undefined)
         {
-          setPokemonData(data);
+          setPokemonData(data.Pokemon);
+          setParticipants(data.Participants);
         }
-        
       });
     },[]);
     /*
@@ -59,6 +65,13 @@ export default function Setup() {
     return null;
   };
   const getCurrentPokemon = () => {
+    if(Participants == undefined)
+    {
+      return null;
+    }
+    return Participants.find((e:any) => e.name.toLowerCase() == currentPokemon.toLowerCase());
+  };
+  const getCurrentParticipant = () => {
     if(PokemonData == undefined)
     {
       return null;
@@ -114,7 +127,6 @@ export default function Setup() {
       }
       if(uploadedimage != null && uploadedimage != undefined)
       {
-        console.log("image update");
         tmp[index].uploadedimage = uploadedimage;
       }
       setPokemonData(tmp.map((x:any) => x));
@@ -133,6 +145,7 @@ export default function Setup() {
           <div className="col-12 col-md-6">
             <div className="row">
               <div className="col-6">
+                <h1>Pokemon</h1>
                 <SelectBox NewString="New Pokemon" active={currentPokemon} onChange={(e:any) => {
                   if(e == "")
                   {
@@ -162,18 +175,48 @@ export default function Setup() {
                 <span className="d-noe">{currentPokemon}</span>
               </div>
               <div className="col-12 col-md-6 py-5">
-                  <label>Pokemon Name</label>
-                  <input type="text" onChange={(x:any) => {updatePokemon(currentPokemon,x.target.value)}} value={getCurrentPokemonName()} ref={inputNameRef} name="name" required />
-                  <label>Pokemon Image</label>
-                  <MyDropzone key={currentPokemon} onUpload={(e:any) => {
-                    //update current Pokemon                    
-                    updatePokemon(currentPokemon,undefined,undefined,e);
+                  <div className={clsx({
+                    ["d-none"]: currentPokemon == "init"
+                  })}>
+                    <label>Pokemon Name</label>
+                    <input type="text" onChange={(x:any) => {updatePokemon(currentPokemon,x.target.value)}} value={getCurrentPokemonName()} ref={inputNameRef} name="name" required />
+                    <label>Pokemon Image</label>
+                    <MyDropzone key={currentPokemon} onUpload={(e:any) => {
+                      //update current Pokemon                    
+                      updatePokemon(currentPokemon,undefined,undefined,e);
 
-                  }} previewImage={getPreviewImage()}/>
-                  <button className="btn btn-primary" onClick={savePokemon} type="submit">Save</button>
+                    }} previewImage={getPreviewImage()}/>
+                    <button className="btn btn-primary" onClick={savePokemon} type="submit">Save</button>
+                  </div>
               </div>
             </div>
-            
+          </div>
+          <div className="col-12 col-md-6">
+            <div className="row">
+              <div className="col-6">
+                <h1>Participants</h1>
+                <SelectBox NewString="New Participant" active={""} onChange={(e:any) => {}} data={Participants} />
+              </div>
+              <div className="col-6 mt-5">
+                  <div className={clsx({
+                        ["d-none"]: currentParticipant == "init" && false
+                      })}>
+                        <label>Participant Name</label>
+                        <input name="name" required />
+                        <label>Tier</label>
+                        <select name="tier" required>
+                          <option value="Tier1">Tier 1</option>
+                          <option value="Tier2">Tier 2</option>
+                          <option value="Tier3">Tier 3</option>
+                          <option value="Bits">Bits</option>
+                        </select>
+                        <label>Pokemon (type to filter)</label>
+                        <SuggestDropDown Label="Pokemon" Items={PokemonData} onSelect={(e:any) => {}} />
+
+
+                  </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

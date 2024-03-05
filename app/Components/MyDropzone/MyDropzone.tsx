@@ -1,10 +1,11 @@
 'use client';
-import React, {useCallback, useEffect, useState} from 'react'
+import React, {useCallback, useEffect, useRef, useState} from 'react'
 import {useDropzone} from 'react-dropzone'
 import Image from 'next/image';
-
+import {resizeImage, blobToBase64} from '../../functions';
 export function MyDropzone(props:{onUpload:any;previewImage:any}) {
-    const [tmpImage,setTmpImage] = useState<any>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const [tmpImage,setTmpImage] = useState<any>(null);
   const onDrop = useCallback((acceptedFiles:any) => {
     acceptedFiles.forEach((file:any) => {
         const reader = new FileReader()
@@ -14,15 +15,22 @@ export function MyDropzone(props:{onUpload:any;previewImage:any}) {
         reader.onload = () => {
         // Do whatever you want with the file contents
             const blob = reader.result;
-            setTmpImage(blob);
-            let tmp = {
+            resizeImage({maxSize:500,file:file},canvas.current).then((resizedBlob) => {
+              blobToBase64(resizedBlob).then((base64) => {
+                setTmpImage(base64);
+              });
+              let castblob = resizedBlob as Blob;
+              let resizedFile = new File([castblob], file.name, {type: file.type})
+              
+              let tmp = {
                 name: file.name,
                 type: file.type,
                 size: file.size,
-                blob: blob,
-                file: file
+                blob: resizedBlob,
+                file: resizedFile
             };
-            props.onUpload(tmp);
+            //props.onUpload(tmp);
+            });
         }
         reader.readAsDataURL(file)
     });
@@ -40,12 +48,12 @@ export function MyDropzone(props:{onUpload:any;previewImage:any}) {
       {
         isDragActive ?
           <p>Drop the files here ...</p> :
-          <p>Drag 'n' drop some files here, or click to select files</p>
+          <p>Drag &apos;n&apos; drop some files here, or click to select files</p>
       }
       {
         tmpImage && <Image src={tmpImage} alt="Pokemon Image" width={200} height={200} />
       }
-
+      <canvas id="canvas" ref={canvas} style={{display:"none"}}></canvas>
     </div>
   )
 }

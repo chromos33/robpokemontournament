@@ -9,6 +9,8 @@
     left:0;
     width:100%;
     border:1px solid white;
+    background-color: black;
+    z-index: 5;
 }   
 .suggestitem
 {

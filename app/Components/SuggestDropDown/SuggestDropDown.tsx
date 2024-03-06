@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from 'react';
 
 export default function SuggestDropDown(props: {Label:string;Items:any;onSelect:any;value?:string}) {
   const [filter,setFilter] = useState<string>(props.value != undefined ? props.value : "");
-  const [open,setOpen] = useState<boolean>(true);
+  const [open,setOpen] = useState<boolean>(false);
   const renderData = () => {
    if(props.Items == null || props.Items == undefined || props.Items.length == 0)
    {

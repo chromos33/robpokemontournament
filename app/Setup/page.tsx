@@ -278,7 +278,7 @@ export default function Setup() {
               </div>
               <div className="col-6 mt-5">
                   <div className={clsx({
-                        ["d-none"]: currentParticipant == "init" && false
+                        ["d-none"]: currentParticipant == "init"
                       })}>
                         <label>Participant Name</label>
                         <input value={getCurrentParticipantName()} onChange={(e) => {updateParticipant(currentParticipant,e.target.value)}} name="name" required />

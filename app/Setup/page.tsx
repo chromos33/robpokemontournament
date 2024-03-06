@@ -72,11 +72,59 @@ export default function Setup() {
     return Participants.find((e:any) => e.name.toLowerCase() == currentPokemon.toLowerCase());
   };
   const getCurrentParticipant = () => {
-    if(PokemonData == undefined)
+    if(Participants == undefined)
     {
       return null;
     }
-    return PokemonData.find((e:any) => e.name.toLowerCase() == currentPokemon.toLowerCase());
+    return Participants.find((e:any) => e.name.toLowerCase() == currentParticipant.toLowerCase());
+  };
+  const getCurrentParticipantName = () => {
+    let participant = getCurrentParticipant();
+    if(participant != null)
+    {
+      return participant.name;
+    }
+    return "";
+  };
+  const getCurrentParticipantTier = () => {
+    let participant = getCurrentParticipant();
+    if(participant != null)
+    {
+      return participant.tier;
+    }
+    return "";
+  };
+  const getCurrentParticipantPokemon = () => {
+    let participant = getCurrentParticipant();
+    if(participant != null)
+    {
+      return participant.pokemon;
+    }
+    return "Glurak";
+  };
+  const updateParticipant = (currentname:string, name?:string, tier?:string, pokemon?:string) => {
+    let tmp = Participants;
+    let index = tmp.findIndex((e:any) => e.name.toLowerCase() == currentParticipant.toLowerCase());
+    if(index != -1)
+    {
+      if(name != null && name != undefined)
+      {
+        tmp[index].name = name;
+      }
+      if(tier != null && tier != undefined)
+      {
+        tmp[index].tier = tier;
+      }
+      if(pokemon != null && pokemon != undefined)
+      {
+        tmp[index].pokemon = pokemon;
+      }
+      setParticipants(tmp.map((x:any) => x));
+      if(name != null)
+      {
+        setCurrentParticipant(name);
+      }
+    }
   };
   const getCurrentPokemonName = () => {
     let pokemon = getCurrentPokemon();
@@ -89,7 +137,6 @@ export default function Setup() {
   const savePokemon = async (event:any) => {
     event.preventDefault();
     let currentPokemon = getCurrentPokemon();
-    console.log(currentPokemon);
     if(currentPokemon != null)
     {
       if(currentPokemon.uploadedimage != null)
@@ -108,6 +155,20 @@ export default function Setup() {
         updatePokemon(currentPokemon,undefined,newBlob.url);
         
       }
+    }
+  };
+  const saveParticipant = async (event:any) => {
+    event.preventDefault();
+    let currentParticipant = getCurrentParticipant();
+    if(currentParticipant != null)
+    {
+        const response = await fetch(
+          `/api/saveparticipant`,
+          {
+            method: 'POST',
+            body: JSON.stringify(currentParticipant)
+          },
+        );
     }
   };
   const updatePokemon = (currentname:string, name?:string, image?:string, uploadedimage?:any) => {
@@ -195,24 +256,44 @@ export default function Setup() {
             <div className="row">
               <div className="col-6">
                 <h1>Participants</h1>
-                <SelectBox NewString="New Participant" active={""} onChange={(e:any) => {}} data={Participants} />
+                <SelectBox NewString="New Participant" active={currentParticipant} onChange={(e:any) => {
+                  if(e == "")
+                  {
+                    let tmp = Participants;
+                    let number = "";
+                    if(tmp != undefined)
+                    {
+                      number = tmp.length;
+                    }
+                    setCurrentParticipant("New Participant "+number);
+                    tmp.push({name:"New Participant "+number,tier:"Tier1",pokemon:""});
+                    setParticipants(tmp.map((x:any) => x));
+                  }
+                  else
+                  {
+                    setCurrentParticipant(e);
+                  }
+                  // Do Something like Fill out the form from the selected data unless it's new data then clear form
+                }} data={Participants} />
               </div>
               <div className="col-6 mt-5">
                   <div className={clsx({
                         ["d-none"]: currentParticipant == "init" && false
                       })}>
                         <label>Participant Name</label>
-                        <input name="name" required />
+                        <input value={getCurrentParticipantName()} onChange={(e) => {updateParticipant(currentParticipant,e.target.value)}} name="name" required />
                         <label>Tier</label>
-                        <select name="tier" required>
+                        <select value={getCurrentParticipantTier()} onChange={(e) => {updateParticipant(currentParticipant,undefined,e.target.value)}} name="tier" required>
                           <option value="Tier1">Tier 1</option>
                           <option value="Tier2">Tier 2</option>
                           <option value="Tier3">Tier 3</option>
                           <option value="Bits">Bits</option>
                         </select>
                         <label>Pokemon (type to filter)</label>
-                        <SuggestDropDown Label="Pokemon" Items={PokemonData} onSelect={(e:any) => {}} />
-
+                        <SuggestDropDown key={getCurrentParticipantName()} value={getCurrentParticipantPokemon()} Label="Pokemon" Items={PokemonData} onSelect={(e:any) => {
+                          updateParticipant(currentParticipant,undefined,undefined,e);
+                        }} />
+                        <span className="btn btn-primary mt-2" onClick={(e) => {saveParticipant(e);}}>Save</span>
 
                   </div>
               </div>

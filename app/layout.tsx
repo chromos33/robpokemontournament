@@ -22,7 +22,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <div>
           <Link className={styles.btn} href="/Setup">Setup Pokemon</Link>
-          <Link className={styles.btn} href="/Battle">Battle</Link>
+          <Link className={styles.btn} href="/">Battle</Link>
         </div>
         {children}
       </body>

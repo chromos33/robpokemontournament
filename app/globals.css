@@ -107,6 +107,15 @@ a {
   border:2px dashed grey;
   padding:10px
 }
+.font-black
+{
+  color:black;
+}
+.bold
+{
+  font-weight: bold;
+
+}
 
 @media (prefers-color-scheme: dark) {
   html {

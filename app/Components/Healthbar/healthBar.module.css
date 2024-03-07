@@ -1,0 +1,36 @@
+.progressBar {
+    background-color: #f3f3f3;
+    border-radius: 13px; /* Rounded edges */
+    height: 30px;
+    width: 100%;
+    margin-top:10px;
+    position:relative
+}
+
+.filler {
+    background: #4CAF50; /* Green background */
+    height: 100%;
+    border-radius: inherit; /* Rounded edges */
+    transition: all .5s linear; /* Animation */
+}
+.filler.green
+{
+    background: #4CAF50; /* Green background */
+}
+.filler.red
+{
+    background: #f44336; /* Red background */
+}
+.filler.yellow
+{
+    background: #ffeb3b; /* Yellow background */
+}
+.currentHP
+{
+    position: absolute;
+    top:0;
+    left:50%;
+    transform: translateX(-50%);
+    color:black;
+    font-weight: bold;
+}

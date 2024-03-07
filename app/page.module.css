@@ -11,3 +11,22 @@
     margin: 4px 2px;
     cursor: pointer;
 }
+.main
+{
+    padding:20px 0;
+}
+.player
+{
+    border:2px solid lightgrey;
+    border-radius:20px;
+    padding:10px;
+}
+.RollResult
+{
+    font-size:30px;
+    color:white;
+    font-weight: bold;
+    width: 100%;
+    display:block;
+    text-align:center;
+}

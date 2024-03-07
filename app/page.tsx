@@ -12,12 +12,14 @@ export default function Home() {
   const [Rolling, setRolling] = useState<any>(false);
   const PlayerStartHealth = 50;
   const [PlayerOne, setPlayerOne] = useState<any>(undefined);
+  const [PlayerOneDamaged, setPlayerOneDamaged] = useState<any>(false);
   const [PlayerOneHealth, setPlayerOneHealth] = useState<any>(PlayerStartHealth);
   const [PlayerOneRoll, setPlayerOneRoll] = useState<any>(0);
 
   const [PlayerTwo, setPlayerTwo] = useState<any>(undefined);
   const [PlayerTwoHealth, setPlayerTwoHealth] = useState<any>(PlayerStartHealth);
   const [PlayerTwoRoll, setPlayerTwoRoll] = useState<any>(0);
+  const [PlayerTwoDamaged, setPlayerTwoDamaged] = useState<any>(false);
   useEffect(() => {
     let participants = [
       {
@@ -104,53 +106,64 @@ export default function Home() {
     return result;
   }
 
+  const PlayersAreSet = () => {
+    return getPlayerOne() != undefined && getPlayerTwo() != undefined;
+  }
+
   const RollPlayerOne = () => {
-    if(!Rolling)
+    if(!Rolling && PlayersAreSet())
     {
       setRolling(true);
       let interval1 = setInterval(() => {
-        console.log(getPlayerOne());
         setPlayerOneRoll(RollDice(getPlayerOne().tier));
-        setTimeout(() => {
-          clearInterval(interval1);
-          setTimeout(() => {
-            let Roll = RollDice(getPlayerOne().tier);
-            setPlayerOneRoll(Roll);
-            DamagePlayerTwo(Roll);
-            setRolling(false);
-          },200);
-        },1600);
       },200);
+      setTimeout(() => {
+        clearInterval(interval1);
+        setTimeout(() => {
+          let Roll = RollDice(getPlayerOne().tier);
+          console.log(Roll);
+          setPlayerOneRoll(Roll);
+          DamagePlayerTwo(Roll);
+          setRolling(false);
+        },200);
+      },1600);
     }
   }
   const DamagePlayerTwo = (damage:number) => {
     let newHP = PlayerTwoHealth - damage;
     if(newHP < 0) newHP = 0;
     setPlayerTwoHealth(newHP);
+    setPlayerTwoDamaged(true);
+    setTimeout(() => {
+      setPlayerTwoDamaged(false);
+    },260);
   }
   const RollPlayerTwo = () => {
-    if(!Rolling)
+    if(!Rolling && PlayersAreSet())
     {
       setRolling(true);
       let interval2 = setInterval(() => {
-        console.log(getPlayerTwo());
         setPlayerTwoRoll(RollDice(getPlayerTwo().tier));
-        setTimeout(() => {
-          clearInterval(interval2);
-          setTimeout(() => {
-            let Roll = RollDice(getPlayerTwo().tier);
-            setPlayerTwoRoll(Roll);
-            DamagePlayerOne(Roll);
-            setRolling(false);
-          },200);
-        },1600);
       },200);
+      setTimeout(() => {
+        clearInterval(interval2);
+        setTimeout(() => {
+          let Roll = RollDice(getPlayerTwo().tier);
+          setPlayerTwoRoll(Roll);
+          DamagePlayerOne(Roll);
+          setRolling(false);
+        },200);
+      },1600);
     }
   }
   const DamagePlayerOne = (damage:number) => {
     let newHP = PlayerOneHealth - damage;
     if(newHP < 0) newHP = 0;
     setPlayerOneHealth(newHP);
+    setPlayerOneDamaged(true);
+    setTimeout(() => {
+      setPlayerOneDamaged(false);
+    },260);
   }
   return (
     <main className={styles.main}>
@@ -188,14 +201,18 @@ export default function Home() {
           </div>
           <div className="col-lg-4 col-md-6 col-12 text-center">
             {PlayerOne != undefined && 
-              <Image alt="Pokemon" width={250} height={250} src={getPokemonImage(getPlayerOne().pokemon)} />
+              <Image className={clsx({
+                [styles.DamageAnimation]: PlayerOneDamaged
+              })} alt="Pokemon" width={250} height={250} src={getPokemonImage(getPlayerOne().pokemon)} />
             }
           </div>
         </div>
         <div className="row">
           <div className="col-lg-4 col-md-6 col-12 text-center">
             {PlayerTwo != undefined && 
-              <Image  alt="Pokemon" width={250} height={250} src={getPokemonImage(getPlayerTwo().pokemon)} />
+              <Image className={clsx({
+                [styles.DamageAnimation]: PlayerTwoDamaged
+              })}  alt="Pokemon" width={250} height={250} src={getPokemonImage(getPlayerTwo().pokemon)} />
             }
           </div>
           <div className="col-lg-4 col-md-6 col-12">

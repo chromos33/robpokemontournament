@@ -5,6 +5,8 @@ import Link from "next/link";
 import { use, useEffect, useState } from "react";
 import clsx from "clsx";
 import Healthbar from "./Components/Healthbar/HealthBar";
+import SuggestDropDown from "./Components/SuggestDropDown/SuggestDropDown";
+import ParticipantDropDown from "./Components/ParticipantDropDown/ParticipantDropDown";
 
 export default function Home() {
   const [Participants, setParticipants] = useState<any>([]);
@@ -21,6 +23,15 @@ export default function Home() {
   const [PlayerTwoRoll, setPlayerTwoRoll] = useState<any>(0);
   const [PlayerTwoDamaged, setPlayerTwoDamaged] = useState<any>(false);
   useEffect(() => {
+    fetch("/api/getParticipantBaseData").then((res) => res.json()).then((data) => {
+      if(data != undefined)
+      {
+        setPokemon(data.Pokemon);
+        setParticipants(data.Participants);
+      }
+    });
+    //Local Test Data
+    /*
     let participants = [
       {
         name: "Player 1",
@@ -55,21 +66,15 @@ export default function Home() {
       }
     ];
     setPokemon(pokemon);
-
+    */
   }, []);
   const getPokemonImage = (name:string) => {
     let pokemon = Pokemon.find((e:any) => e.name == name);
+    console.log(pokemon);
     if(pokemon != undefined) {
       return pokemon.image;
     }
     return "";
-  }
-  const renderParticipantOptions = () => {
-    if(Participants.length > 0) {
-      return Participants.map((e:any,index:number) => {
-        return <option key={index} value={e.name}>{e.name} Tier {renderTier(e.tier)}</option>
-      });
-    }
   }
   const renderTier = (tier:string) => {
     switch(tier) {
@@ -93,10 +98,10 @@ export default function Home() {
     let diceCount = 1;
     let diceSides = 6;
     switch(Tier) {
-      case "Bits": diceSides = 4; diceCount = 1; break;
-      case "Tier1": diceSides = 6; diceCount = 2; break;
-      case "Tier2": diceSides = 8; diceCount = 3; break;
-      case "Tier3": diceSides = 10; diceCount = 2; break;
+      case "Bits": diceSides = 6; diceCount = 2; break;
+      case "Tier1": diceSides = 12; diceCount = 1; break;
+      case "Tier2": diceSides = 6; diceCount = 2; break;
+      case "Tier3": diceSides = 4; diceCount = 3; break;
     }
     let result = 0;
     for(let i = 0; i < diceCount; i++) {
@@ -121,7 +126,6 @@ export default function Home() {
         clearInterval(interval1);
         setTimeout(() => {
           let Roll = RollDice(getPlayerOne().tier);
-          console.log(Roll);
           setPlayerOneRoll(Roll);
           DamagePlayerTwo(Roll);
           setRolling(false);
@@ -176,13 +180,10 @@ export default function Home() {
             })}>
               <div className="row">
                 <div className="col-6">
-                <select onChange={(e) => {
-                  setPlayerOne(e.target.value);
+                <ParticipantDropDown  key="Player 2" Label="Player 1" Items={Participants} onSelect={(e:any) => {
+                  setPlayerOne(e);
                   setPlayerOneHealth(PlayerStartHealth);
-                }} name="playerone" id="playerone">
-                  <option value="Select" selected disabled>Choose Player</option>
-                {renderParticipantOptions()}
-                </select>
+                }} />
                 </div>
                 <div className="col-6 text-end">
                   {PlayerOne != undefined && <span>Level {renderTier(getPlayerOne().tier)}</span>}
@@ -222,13 +223,11 @@ export default function Home() {
             })}>
               <div className="row">
                 <div className="col-6">
-                <select onChange={(e) => {
-                  setPlayerTwo(e.target.value);
+                <ParticipantDropDown key="Player 2" Label="Player 2" Items={Participants} onSelect={(e:any) => {
+                  console.log(e);
+                  setPlayerTwo(e);
                   setPlayerTwoHealth(PlayerStartHealth);
-                }} name="playerTwo" id="playerTwo">
-                  <option value="Select" selected disabled>Choose Player</option>
-                {renderParticipantOptions()}
-                </select>
+                }} />
                 </div>
                 <div className="col-6 text-end">
                   {PlayerTwo != undefined && <span>Level {renderTier(getPlayerTwo().tier)}</span>}

@@ -29,35 +29,13 @@ export default function Setup() {
         }
       });
     },[]);
-    /*
-  const submitForm = async (event:any) => {
-    event.preventDefault();
-          
-    if (!inputFileRef.current?.files) {
-      throw new Error('No file selected');
-    }
-
-    const file = inputFileRef.current.files[0];
-    const name = inputNameRef.current?.value;
-
-    const response = await fetch(
-      `/api/uploadpokemon?filename=${file.name}&name=${name}`,
-      {
-        method: 'POST',
-        body: file,
-      },
-    );
-
-    const newBlob = (await response.json()) as PutBlobResult;
-
-    setBlob(newBlob);
-  };*/
   const getPreviewImage = () => {
     if(mode == "create")
     {
       return null;
     }
     let currentPokemon = getCurrentPokemon();
+    console.log(currentPokemon);
     if(currentPokemon != null)
     {
       return currentPokemon.image;
@@ -65,11 +43,11 @@ export default function Setup() {
     return null;
   };
   const getCurrentPokemon = () => {
-    if(Participants == undefined)
+    if(PokemonData == undefined)
     {
       return null;
     }
-    return Participants.find((e:any) => e.name.toLowerCase() == currentPokemon.toLowerCase());
+    return PokemonData.find((e:any) => e.name.toLowerCase() == currentPokemon.toLowerCase());
   };
   const getCurrentParticipant = () => {
     if(Participants == undefined)
@@ -208,6 +186,7 @@ export default function Setup() {
               <div className="col-6">
                 <h1>Pokemon</h1>
                 <SelectBox NewString="New Pokemon" active={currentPokemon} onChange={(e:any) => {
+                  console.log(e);
                   if(e == "")
                   {
                     
@@ -233,7 +212,7 @@ export default function Setup() {
                   }
                   // Do Something like Fill out the form from the selected data unless it's new data then clear form
                 }} data={PokemonData} />
-                <span className="d-noe">{currentPokemon}</span>
+                <span className="d-none">{currentPokemon}</span>
               </div>
               <div className="col-12 col-md-6 py-5">
                   <div className={clsx({

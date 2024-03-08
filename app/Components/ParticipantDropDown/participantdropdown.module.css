@@ -1,0 +1,27 @@
+.selectbox
+{
+    position:relative;
+}
+.suggestbox
+{
+    position:absolute;
+    top:100%;
+    left:0;
+    width:100%;
+    border:1px solid white;
+    background-color: black;
+    z-index: 5;
+}   
+.suggestitem
+{
+    padding:5px 10px;
+    border-bottom: 1px solid grey;
+    width: 100%;
+    display:block;
+}
+.suggestitem:hover
+{
+    background-color: #4CAF50 !important;
+    color: white;
+    cursor:pointer;
+}

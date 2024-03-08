@@ -6,7 +6,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
   var Pokemon = undefined;
   {
-    let {rows,fields} = await sql`SELECT Name FROM Pokemon`;
+    let {rows,fields} = await sql`SELECT Name, Bloburl FROM Pokemon`;
 
     Pokemon = rows.map((e:any) => {
       return {name: e.name, image: e.bloburl,uploadedimage:null};

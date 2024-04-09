@@ -117,6 +117,7 @@ export default function Setup() {
     let currentPokemon = getCurrentPokemon();
     if(currentPokemon != null)
     {
+      console.log(currentPokemon);
       if(currentPokemon.uploadedimage != null)
       {
         console.log(currentPokemon.uploadedimage.file);
@@ -186,7 +187,6 @@ export default function Setup() {
               <div className="col-6">
                 <h1>Pokemon</h1>
                 <SelectBox NewString="New Pokemon" active={currentPokemon} onChange={(e:any) => {
-                  console.log(e);
                   if(e == "")
                   {
                     
@@ -222,7 +222,8 @@ export default function Setup() {
                     <input type="text" onChange={(x:any) => {updatePokemon(currentPokemon,x.target.value)}} value={getCurrentPokemonName()} ref={inputNameRef} name="name" required />
                     <label>Pokemon Image</label>
                     <MyDropzone key={currentPokemon} onUpload={(e:any) => {
-                      //update current Pokemon                    
+                      //update current Pokemon     
+                      console.log(e);               
                       updatePokemon(currentPokemon,undefined,undefined,e);
 
                     }} previewImage={getPreviewImage()}/>

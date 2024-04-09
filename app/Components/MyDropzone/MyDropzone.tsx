@@ -29,7 +29,7 @@ export function MyDropzone(props:{onUpload:any;previewImage:any}) {
                 blob: resizedBlob,
                 file: resizedFile
             };
-            //props.onUpload(tmp);
+            props.onUpload(tmp);
             });
         }
         reader.readAsDataURL(file)

@@ -61,7 +61,7 @@ export default function Home() {
           DamagePlayerTwo(Roll);
           setRolling(false);
         },200);
-      },400);
+      },1000);
     }
   }
   const DamagePlayerTwo = (damage:number) => {
@@ -95,7 +95,7 @@ export default function Home() {
           DamagePlayerOne(Roll);
           setRolling(false);
         },200);
-      },1600);
+      },1000);
     }
   }
   const DamagePlayerOne = (damage:number) => {

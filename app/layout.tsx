@@ -23,6 +23,7 @@ export default function RootLayout({
         <div>
           <Link className={styles.btn} href="/Setup">Setup Pokemon</Link>
           <Link className={styles.btn} href="/">Battle</Link>
+          <Link className={styles.btn} href="/Scuffed">Scuffed Battle</Link>
         </div>
         {children}
       </body>

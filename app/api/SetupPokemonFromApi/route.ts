@@ -3,6 +3,10 @@ import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
  
 export async function GET(request: Request): Promise<NextResponse> {
+
+  return NextResponse.json({}, { status: 200 });
+
+  //run only local on development production just poops
   const response = await fetch('https://pokeapi.co/api/v2/pokemon?offset=0&limit=9999');
   const data = await response.json();
 

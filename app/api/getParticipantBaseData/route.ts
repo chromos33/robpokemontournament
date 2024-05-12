@@ -17,7 +17,7 @@ export async function GET(request: Request): Promise<NextResponse> {
   {
     const { rows,fields} = await sql`SELECT * FROM Participant`;
     Participants = rows.map((e:any) => {
-      return {name: e.name, tier: e.tier, pokemon: e.pokemon};
+      return {id:e.id, name: e.name, tier: e.tier, pokemon: e.pokemon};
     });
   }
   var result = {

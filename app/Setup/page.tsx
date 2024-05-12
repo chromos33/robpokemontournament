@@ -25,6 +25,7 @@ export default function Setup() {
         if(data != undefined)
         {
           setPokemonData(data.Pokemon);
+          console.log(data.Participants);
           setParticipants(data.Participants);
         }
       });
@@ -123,7 +124,7 @@ export default function Setup() {
         console.log(currentPokemon.uploadedimage.file);
         
         const response = await fetch(
-          `/api/uploadpokemon?filename=${currentPokemon.uploadedimage.name}&name=${currentPokemon.name}`,
+          `/api/uploadpokemon?id=${currentPokemon.id}&filename=${currentPokemon.uploadedimage.name}&name=${currentPokemon.name}`,
           {
             method: 'POST',
             body: currentPokemon.uploadedimage.file,
@@ -141,6 +142,7 @@ export default function Setup() {
     let currentParticipant = getCurrentParticipant();
     if(currentParticipant != null)
     {
+      console.log(currentParticipant);
         const response = await fetch(
           `/api/saveparticipant`,
           {

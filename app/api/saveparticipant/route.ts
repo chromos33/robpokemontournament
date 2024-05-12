@@ -6,12 +6,13 @@ export async function POST(request: Request): Promise<NextResponse> {
   const json = await request.json();
   console.log(json);
   if(json != null){
+    console.log(json);
       try{
-        const {rows,fields} = await sql`SELECT * FROM Participant WHERE Name = ${json.name};`;
+        const {rows,fields} = await sql`SELECT * FROM Participant WHERE id = ${json.id};`;
         if(rows.length > 0)
         {
           console.log("Update Participant");
-          const result = await sql`UPDATE Participant WHERE Name = ${json.name} SET Name = ${json.name}, Tier = ${json.tier}, Pokemon = ${json.pokemon} ;`;
+          const result = await sql`UPDATE Participant SET ID = ${json.id}, Name = ${json.name}, Tier = ${json.tier}, Pokemon = ${json.pokemon} WHERE id = ${json.id};`;
         }
         else{
           console.log(`INSERT INTO Participant (Name, Tier,Pokemon) VALUES (${json.name}, ${json.tier}, ${json.pokemon});`);

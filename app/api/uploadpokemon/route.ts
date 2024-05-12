@@ -6,6 +6,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
   const filename = searchParams.get('filename');
   const name = searchParams.get('name');
+  const id = searchParams.get('id');
   if(filename != null && name != null && request.body != null){
       const blob = await put(filename, request.body, {
         access: 'public',
@@ -14,7 +15,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       const pokemonname = name;
       const pokemonblob = blob.url;
       try{
-        const {rows,fields} = await sql`SELECT * FROM Pokemon WHERE Name = ${pokemonname};`;
+        const {rows,fields} = await sql`SELECT * FROM Pokemon WHERE id = ${id};`;
         if(rows.length > 0)
         {
           const result = await sql`UPDATE Pokemon SET BlobUrl = ${pokemonblob};`;

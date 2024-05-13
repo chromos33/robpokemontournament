@@ -6,9 +6,9 @@ import { useState, useRef, useEffect } from 'react';
 export default function Healthbar(props: {Health: number, MaxHealth:number}) {
   
   let width = (props.Health / props.MaxHealth) * 100 + "%";
-    let healthBarColorClass = "green";
-    if(props.Health < 15) healthBarColorClass = "red";
-    else if(props.Health < 30) healthBarColorClass = "yellow";
+    let healthBarColorClass = styles.green;
+    if(props.Health < 15) healthBarColorClass = styles.red;
+    else if(props.Health < 30) healthBarColorClass = styles.yellow;
     return (
         <div className={styles.progressBar}>
             <div className={clsx({

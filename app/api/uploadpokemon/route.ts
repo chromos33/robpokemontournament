@@ -18,6 +18,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       try{
         if(id == undefined || id == "undefined")
           {
+            // @ts-ignore
             const result: { max_id: number }[] = (await sql`SELECT Count(*) AS max_id FROM Pokemon`).rows;
             id = (result[0].max_id + 10001).toString();
             console.log(id);

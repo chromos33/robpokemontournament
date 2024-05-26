@@ -42,7 +42,9 @@ export async function POST(request: Request): Promise<NextResponse> {
         range: 'Sheet1!A1:E100'
       };
       await sql`TRUNCATE TABLE Participant`;
+      // @ts-ignore
       let data = await gsapi.spreadsheets.values.get(opt);
+      // @ts-ignore
       let Errors = await Promise.all(data.data.values?.map(async (row) => {
         let SubError = "";
         const [username, tierNumber, pokemonName, bits, bitsPokemonName] = row;

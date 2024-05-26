@@ -24,6 +24,7 @@ export default function RootLayout({
           <Link className={styles.btn} href="/Setup">Setup Pokemon</Link>
           <Link className={styles.btn} href="/">Battle</Link>
           <Link className={styles.btn} href="/Scuffed">Scuffed Battle</Link>
+          <Link className={styles.btn} href="/Import">Import</Link>
         </div>
         {children}
       </body>

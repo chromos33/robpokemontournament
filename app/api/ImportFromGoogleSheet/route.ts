@@ -8,14 +8,14 @@ async function queryPokemonTable(pokemonName: string) {
 }
 
 async function createParticipant(username: string, tier: string, pokemonName: string) {
-  await sql`INSERT INTO Participant (Name, Tier, Pokemon) VALUES (${username}, ${tier}, ${pokemonName})`;
+  await sql`INSERT INTO Participant (Name, Tier, Pokemon) VALUES (${username}, ${tier}, ${pokemonName.toLowerCase()})`;
 }
 
 
-export async function GET(request: Request): Promise<NextResponse> {
-  const { searchParams } = new URL(request.url);
-  const spreadsheetId = searchParams.get('spreadsheetId'); // assuming the spreadsheet ID is passed as a query parameter
-  console.log(spreadsheetId);
+export async function POST(request: Request): Promise<NextResponse> {
+  const formData = await request.formData();
+  var Error = "";
+  const spreadsheetId = formData.get('spreadsheetId'); // assuming the spreadsheet ID is passed as a query parameter
   if (spreadsheetId === undefined || spreadsheetId === null) {
     return NextResponse.json({}, { status: 400 });
   }
@@ -27,10 +27,12 @@ export async function GET(request: Request): Promise<NextResponse> {
       ['https://www.googleapis.com/auth/spreadsheets.readonly']
     );
     //'107MdtHiAzVtHBXAbZlsMl6JWx3p-rH0PArXpkrKirJQ'
-    client.authorize(async function (err, tokens) {
+    await client.authorize(async function (err, tokens) {
       if (err) {
         return NextResponse.json({ error: "Authorize Failed" }, { status: 400 });
       }
+    });
+      let Output = "";
 
       const gsapi = google.sheets({ version: 'v4', auth: client });
 
@@ -41,7 +43,8 @@ export async function GET(request: Request): Promise<NextResponse> {
       };
       await sql`TRUNCATE TABLE Participant`;
       let data = await gsapi.spreadsheets.values.get(opt);
-      data.data.values?.forEach(async (row) => {
+      let Errors = await Promise.all(data.data.values?.map(async (row) => {
+        let SubError = "";
         const [username, tierNumber, pokemonName, bits, bitsPokemonName] = row;
         if (username == "Username") {
           return;
@@ -58,7 +61,8 @@ export async function GET(request: Request): Promise<NextResponse> {
             await createParticipant(username, tier, pokemonName);
           }
           else {
-            console.log(`Pokemon ${pokemonName} does not exist in the database`);
+            SubError += `${username} could not be created because pokemon ${pokemonName} does not exist in the database<br/>`;
+            //console.log(`Pokemon with the ${pokemonName} does not exist in the database`);
           }
         }
         if (!bitsPokemonName) {
@@ -68,17 +72,28 @@ export async function GET(request: Request): Promise<NextResponse> {
 
           // If pokemon exists, create a new participant
           if (pokemonbitsExists) {
-            await createParticipant(username, 'Bits', bitsPokemonName);
+            await createParticipant(username+"_Bits", 'Bits', bitsPokemonName);
           }
           else {
-            console.log(`Pokemon ${bitsPokemonName} does not exist in the database`);
+            SubError += `${username+"_Bits"} could not be created because pokemon ${bitsPokemonName} does not exist in the database<br/>`;
+            //console.log(`Pokemon ${bitsPokemonName} does not exist in the database`);
           }
         }
-      });
-      return NextResponse.json({}, { status: 200 });
-    });
+        return SubError;
+      }));
+      Errors.forEach((e) => {
+        if(e != '' && e != undefined)
+          {
+            Error += e;
+          }
+      })
+      Error += "<br/> Please correct typos or add the missing pokemon to the database yourself"
   } catch (e) {
     return NextResponse.json({}, { status: 400 });
   }
-  return NextResponse.json({}, { status: 400 });
+  if(Error != "")
+  {
+    return NextResponse.json({Error: Error}, { status: 200 });
+  }
+  return NextResponse.json({}, { status: 403 });
 }

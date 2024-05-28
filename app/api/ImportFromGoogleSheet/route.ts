@@ -20,6 +20,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({}, { status: 400 });
   }
   try {
+    console.log(process.env.GOOGLE_CLIENT_EMAIL);
+    console.log(process.env.GOOGLE_PRIVATE_KEY);
     const client = new google.auth.JWT(
       process.env.GOOGLE_CLIENT_EMAIL,
       undefined,
@@ -91,7 +93,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       })
       Error += "<br/> Please correct typos or add the missing pokemon to the database yourself"
   } catch (e) {
-    return NextResponse.json({}, { status: 400 });
+    return NextResponse.json({Error:e}, { status: 400 });
   }
   if(Error != "")
   {
